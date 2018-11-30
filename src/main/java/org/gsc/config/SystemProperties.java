@@ -15,10 +15,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.ethereum.config;
+package org.gsc.config;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,8 +48,8 @@ import java.util.function.Function;
  * @author Roman Mandeleil
  * @since 22.05.2014
  */
+@Slf4j
 public class SystemProperties {
-    private static Logger logger = LoggerFactory.getLogger("general");
 
     private static SystemProperties CONFIG;
 

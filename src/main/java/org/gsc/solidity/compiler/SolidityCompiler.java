@@ -15,9 +15,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.ethereum.solidity.compiler;
+package org.gsc.solidity.compiler;
 
-import org.ethereum.config.SystemProperties;
+import lombok.extern.slf4j.Slf4j;
+import org.gsc.config.SystemProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +36,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+@Slf4j
 @Component
 public class SolidityCompiler {
 

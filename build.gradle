@@ -6,8 +6,8 @@ plugins {
     id 'de.undercouch.download' version '3.4.3'
 }
 
-group 'org.ethereum'
-version '0.4.25'
+group 'org.gsc'
+version '0.0.1'
 
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.properties['bintrayUser']
@@ -19,9 +19,9 @@ bintray {
     override = false
 
     pkg {
-        userOrg = 'ethereum'
+        userOrg = 'gsc'
         repo = 'maven'
-        name = 'org.ethereum.solcJ-all'
+        name = 'org.gsc.gsc-solcJ'
         licenses = []
         vcsUrl = 'https://github.com/ether-camp/solcJ.git'
         labels = ['Solidity']
@@ -38,6 +38,32 @@ repositories {
 }
 
 dependencies {
+    // google grpc
+    compile group: 'io.grpc', name: 'grpc-netty', version: '1.9.0'
+    compile group: 'io.grpc', name: 'grpc-protobuf', version: '1.9.0'
+    compile group: 'io.grpc', name: 'grpc-stub', version: '1.9.0'
+
+    compile "com.madgag.spongycastle:core:1.58.0.0"
+    compile "com.madgag.spongycastle:prov:1.58.0.0"
+
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.25'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+
+    compile "org.projectlombok:lombok:1.16.18"
+
+    compile group: 'org.fusesource.jansi', name: 'jansi', version: '1.16'
+    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.44'
+
+    compile "com.fasterxml.jackson.core:jackson-databind:2.5.1"
+    compile "org.apache.commons:commons-collections4:4.0"
+    compile "org.apache.commons:commons-lang3:3.4"
+    compile "commons-codec:commons-codec:1.10"
+    compile "org.springframework:spring-context:4.3.19.RELEASE"
+    compile("com.googlecode.json-simple:json-simple:1.1.1") {
+        exclude group: 'junit', module: 'junit'
+    }
+    compile "com.typesafe:config:1.2.1"
     testCompile "junit:junit:4.11"
 }
 
@@ -49,23 +75,58 @@ test {
     }
 }
 
-task downloadStaticLinuxFile(type: Download) {
-    src "https://github.com/ethereum/solidity/releases/download/v${version}/solc-static-linux"
-    dest "${projectDir}/src/main/resources/native/linux/solc/solc"
+/**
+ * Create download tasks
+ */
+
+
+ext.solidityVersion = [
+        '0.4.25',
+        '0.4.24',
+        '0.4.23',
+]
+
+task downloadStaticLinuxFile{
+    solidityVersion.each {
+        solc ->
+            task "downloadStaticLinuxFile_${solc.hashCode()}"(type: Download) {
+                src "https://github.com/ethereum/solidity/releases/download/v${solc}/solc-static-linux"
+                dest "${projectDir}/src/main/resources/native/linux/v${solc}/solc"
+            }
+            downloadStaticLinuxFile.dependsOn("downloadStaticLinuxFile_${solc.hashCode()}")
+    }
 }
 
-task downloadWindowsZipFile(type: Download) {
-    src "https://github.com/ethereum/solidity/releases/download/v${version}/solidity-windows.zip"
-    dest new File("${buildDir}/tmp", 'solidity-windows.zip')
+task downloadWindowsZipFile{
+    solidityVersion.each {
+        solc ->
+            task "downloadWindowsZipFile_${solc.hashCode()}"(type: Download) {
+                src "https://github.com/ethereum/solidity/releases/download/v${solc}/solidity-windows.zip"
+                dest new File("${buildDir}/tmp/v${solc}", 'solidity-windows.zip')
+            }
+            downloadWindowsZipFile.dependsOn("downloadWindowsZipFile_${solc.hashCode()}")
+    }
 }
 
-task unzipFile(dependsOn: downloadWindowsZipFile, type: Copy) {
-    from zipTree(downloadWindowsZipFile.dest)
-    into "${projectDir}/src/main/resources/native/win/solc"
+task unzipFile{
+    solidityVersion.each {
+        solc ->
+            task "unzipFile_${solc.hashCode()}"(dependsOn: downloadWindowsZipFile, type: Copy) {
+                from zipTree("${buildDir}/tmp/v${solc}/solidity-windows.zip")
+                into "${projectDir}/src/main/resources/native/win/v${solc}"
+            }
+            unzipFile.dependsOn("unzipFile_${solc.hashCode()}")
+    }
 }
 
-task cleanUpFiles(dependsOn: unzipFile, type: Delete) {
-    delete "${projectDir}/src/main/resources/native/win/solc/soltest.exe"
+task cleanUpFiles{
+    solidityVersion.each {
+        solc ->
+            task "cleanUpFiles_${solc.hashCode()}"(dependsOn: unzipFile, type: Delete) {
+                delete "${projectDir}/src/main/resources/native/win/v${solc}/soltest.exe"
+            }
+            cleanUpFiles.dependsOn("cleanUpFiles_${solc.hashCode()}")
+    }
 }
 
 assemble.dependsOn downloadStaticLinuxFile

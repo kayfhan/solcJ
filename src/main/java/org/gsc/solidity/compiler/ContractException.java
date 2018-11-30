@@ -15,8 +15,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.ethereum.solidity.compiler;
+package org.gsc.solidity.compiler;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ContractException extends RuntimeException {
 
     public ContractException(String message) {

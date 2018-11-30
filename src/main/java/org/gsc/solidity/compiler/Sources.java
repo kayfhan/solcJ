@@ -15,14 +15,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.ethereum.solidity.compiler;
+package org.gsc.solidity.compiler;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.ethereum.solidity.compiler.ContractException.assembleError;
+import static org.gsc.solidity.compiler.ContractException.assembleError;
 
+@Slf4j
 public class Sources {
 
     private final Map<String, SourceArtifact> artifacts = new HashMap<>();

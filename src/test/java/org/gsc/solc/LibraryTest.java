@@ -1,3 +1,5 @@
+package org.gsc.solc;
+
 import org.junit.Test;
 
 import java.io.*;

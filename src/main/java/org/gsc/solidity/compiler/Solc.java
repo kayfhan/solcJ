@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.ethereum.solidity.compiler;
+package org.gsc.solidity.compiler;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,11 +24,14 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 
-import org.ethereum.config.SystemProperties;
+import lombok.extern.slf4j.Slf4j;
+import org.gsc.config.SystemProperties;
 
 /**
  * Created by Anton Nashatyrev on 03.03.2016.
  */
+
+@Slf4j
 public class Solc {
 
     private File solc = null;
